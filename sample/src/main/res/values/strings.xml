@@ -1,3 +1,11 @@
 <resources>
-    <string name="app_name">sample-android-portum-sdk</string>
+    <string name="app_name">Portum Sample</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="show_ad">Request Ad</string>
+    <string name="image_ad">Image Ad</string>
+    <string name="video_ad">Video Ad</string>
+
+    <string name="ad_unit_id">Ad Unit Id</string>
 </resources>
