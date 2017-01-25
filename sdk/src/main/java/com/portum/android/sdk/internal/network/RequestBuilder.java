@@ -1,65 +1,67 @@
 package com.portum.android.sdk.internal.network;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.telephony.TelephonyManager;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.portum.android.sdk.internal.Logger;
-import com.portum.android.sdk.internal.helper.AdvertisingIdClient;
 import com.portum.android.sdk.internal.model.AdFormat;
 import com.portum.android.sdk.internal.model.AdRequest;
 import com.portum.android.sdk.internal.model.ConnectionType;
 import com.portum.android.sdk.internal.model.Gender;
 import com.portum.android.sdk.internal.model.UserInfo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 /**
- * Created by camobap on 8/17/15.
+ * Ad Server request builder
  */
 public final class RequestBuilder {
 
     private static AdRequest sCache = null;
 
+    /**
+     * Build Ad Server request model
+     *
+     * @param context android context
+     * @param adUnitId ad unit id in portum system
+     * @param userInfo user information
+     * @param adFormat see {@link AdFormat}
+     *
+     * @return request model
+     */
     public AdRequest buildAdRequest(Context context, String adUnitId,
                                     UserInfo userInfo, AdFormat adFormat) {
-
-        if (sCache == null) {
-            sCache = new AdRequest(context);
+        synchronized (this) {
+            if (sCache == null) {
+                sCache = new AdRequest(context);
+            }
         }
 
-        sCache.setAdUnitId(adUnitId);
-        sCache.setFormat(adFormat);
-        sCache.setConnectionType(getNetworkClass(context));
+        AdRequest result = new AdRequest(sCache);
+
+        result.setAdUnitId(adUnitId);
+        result.setFormat(adFormat);
+        result.setConnectionType(getNetworkClass(context));
 
         if (userInfo != null) {
             if (userInfo.getGender() != Gender.UNKNOWN) {
-                sCache.setUserGender(userInfo.getGender() == Gender.FEMALE ? "f" : "m");
+                result.setUserGender(userInfo.getGender() == Gender.FEMALE ? "f" : "m");
             }
 
-            sCache.setUserAge(userInfo.getAge());
+            result.setUserAge(userInfo.getAge());
         }
 
-        return sCache;
+        return result;
     }
 
     /**
      * http://stackoverflow.com/a/25912464/902217
+     *
+     * @param context android context
+     *
+     * @return network connection type {@link ConnectionType}
      */
-    public static ConnectionType getNetworkClass(Context context) {
+    private ConnectionType getNetworkClass(Context context) {
         ConnectionType type = ConnectionType.UNKNOWN;
         try {
             ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -104,31 +106,5 @@ public final class RequestBuilder {
         }
 
         return type;
-    }
-
-    /**
-     * http://stackoverflow.com/a/63274/902217
-     * @param list
-     * @param delim
-     * @return
-     */
-    private static String join(List<String> list, String delim) {
-        if (list == null || list.size() == 0) {
-            return null;
-        }
-
-        StringBuilder sb = new StringBuilder();
-
-        String loopDelim = "";
-
-        for(String s : list) {
-
-            sb.append(loopDelim);
-            sb.append(s);
-
-            loopDelim = delim;
-        }
-
-        return sb.toString();
     }
 }

@@ -22,7 +22,7 @@ import java.util.Locale;
 /**
  * Class which contains all fields for build HTTP request
  */
-public class AdRequest {
+public final class AdRequest {
 
     private String mAdUnitId;
     private String mApiVersion;
@@ -74,36 +74,15 @@ public class AdRequest {
 
             DisplayMetrics dm = context.getResources().getDisplayMetrics();
             mScreenDpi = dm.densityDpi;
+
+            double x = Math.pow(mScreenWidth / dm.xdpi, 2);
+            double y = Math.pow(mScreenHeight / dm.ydpi, 2);
+
+            screenInch = (float)Math.sqrt(x+y);
         } catch (Exception e) {
             Logger.w("Cannot retrieve screen size info");
             throw new IllegalStateException("Cannot retrieve screen size info", e);
         }
-//
-//        try {
-//            Map<Integer, Integer> ads = new HashMap<>();
-//
-//            // list of supported resolutions
-//            if (getScreenWidth() < getScreenHeight()) { // portrait
-//                ads.put(320, 480);
-//                ads.put(640, 960);
-//                ads.put(768, 1024);
-//            } else {                                                    // landscape
-//                ads.put(480, 320);
-//                ads.put(960, 640);
-//                ads.put(1024, 768);
-//            }
-//
-//            Integer closestWidth = closest(getScreenWidth(), ads.keySet());
-//            Integer closestHeight = ads.get(closestWidth);
-//
-//            setAdWidth(closestWidth);
-//            setAdHeight(closestHeight);
-//        } catch (Exception e) {
-//            Logger.w("Cannot calculate closest ads size");
-//
-//            setAdWidth(320);
-//            setAdHeight(480);
-//        }
 
         try {
             mGoogleAdId = AdvertisingIdClient.getAdvertisingIdInfo(context).getId();
@@ -136,6 +115,32 @@ public class AdRequest {
         mAppId = context.getPackageName();
 
         mPlatformId = Settings.Secure.ANDROID_ID;
+    }
+
+    public AdRequest(AdRequest adRequest) {
+        mAdUnitId = adRequest.mAdUnitId;
+        mApiVersion = adRequest.mApiVersion;
+        mScreenWidth = adRequest.mScreenWidth;
+        mScreenHeight = adRequest.mScreenHeight;
+        mScreenDpi = adRequest.mScreenDpi;
+        mGoogleAdId = adRequest.mGoogleAdId;
+        mFormat = adRequest.mFormat;
+        mDeviceModel = adRequest.mDeviceModel;
+        mDeviceOS = adRequest.mDeviceOS;
+        mLanguage = adRequest.mLanguage;
+        mMCC = adRequest.mMCC;
+        mMNC = adRequest.mMNC;
+        mUserGender = adRequest.mUserGender;
+        mUserAge = adRequest.mUserAge;
+        mConnectionType = adRequest.mConnectionType;
+        mPlatformId = adRequest.mPlatformId;
+        mHardwareId = adRequest.mHardwareId;
+        mMAC = adRequest.mMAC;
+        mCoppa = adRequest.mCoppa;
+        mAppId = adRequest.mAppId;
+        screenInch = adRequest.screenInch;
+        latitude = adRequest.latitude;
+        longitude = adRequest.longitude;
     }
 
     public void setAdUnitId(String adUnitId) {

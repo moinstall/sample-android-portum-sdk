@@ -114,8 +114,8 @@ public final class PortumFacade {
      * The same as previous just for convenience you can setup placement Id once and then only call
      * show method without params
      *
-     * @param context - android context
-     * @param adUnitId - ad unit id
+     * @param context android context
+     * @param adUnitId ad unit id
      */
     public static synchronized void prepare(final Context context, final String adUnitId) {
         if (context == null) {
@@ -147,7 +147,7 @@ public final class PortumFacade {
      * Optional step, if SDK user can provde more detailed info about user, this will help
      * to show more relevant ads, this info has ben taken from social networks as example
      *
-     * @param userInfo - basic User info
+     * @param userInfo basic User info
      */
     public static void setUserInfo(UserInfo userInfo) {
         mUserInfo = userInfo;
@@ -156,6 +156,9 @@ public final class PortumFacade {
     /**
      * Thread-safe way to show ad. This method query service about latest creatives.
      * Also it carrying about current device orientation and work asynchronously.
+     *
+     * @param adUnitId ad unit id in portum system
+     * @param format {@link AdFormat}
      */
     public static void showAd(String adUnitId, AdFormat format) {
         madUnitId = adUnitId;
@@ -235,7 +238,7 @@ public final class PortumFacade {
 
     /**
      * This implementation as example, providing user specific info up to end sdk users (developers)
-     * @return
+     * @return user info
      */
     private static UserInfo getUserInfo() {
         if (mUserInfo == null) {

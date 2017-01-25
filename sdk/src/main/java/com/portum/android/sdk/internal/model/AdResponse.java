@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Ad response model
  */
-public class AdResponse {
+public final class AdResponse {
 
     public static class Creative {
         @Json(name = "url") String mUrl;
@@ -26,7 +26,7 @@ public class AdResponse {
     }
 
     public String getBannerUrl() {
-        return mBannerCeative != null ? mBannerCeative.getUrl() : null;
+        return mBannerCreative != null ? mBannerCreative.getUrl() : null;
     }
 
     public String getVideoUrl() {
@@ -46,7 +46,7 @@ public class AdResponse {
     @Json(name = "status") AdResponseStatus mStatus;
     @Json(name = "ad_type") AdFormat mAdFormat;
     @Json(name = "video") Creative mVideoCreative;
-    @Json(name = "banner") Creative mBannerCeative;
+    @Json(name = "banner") Creative mBannerCreative;
     @Json(name = "click_url") String mClickUrl;
     @Json(name = "impressions") List<String> mImpressionUrls;
 }

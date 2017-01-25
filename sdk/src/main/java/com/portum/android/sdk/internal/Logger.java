@@ -13,7 +13,7 @@ public final class Logger {
 
     /**
      * http://stackoverflow.com/questions/20176284/buildconfig-debug-always-false-when-building-library-projects-with-gradle
-     * @param message
+     * @param message is log entry
      */
     public static void d(String message) {
         if (BuildConfig.DEBUG) {

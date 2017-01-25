@@ -4,7 +4,7 @@ import com.portum.android.sdk.internal.model.AdResponseStatus;
 import com.squareup.moshi.FromJson;
 import com.squareup.moshi.ToJson;
 
-public class AdResponseStatusJsonAdapter {
+public final class AdResponseStatusJsonAdapter {
 
     @ToJson
     String toJson(AdResponseStatus card) {

@@ -21,7 +21,7 @@ import okhttp3.ResponseBody;
 /**
  * Portum Ad Server client
  */
-public class PortumAdServerAPI20 implements AdNetworkServiceProvider {
+public final class PortumAdServerAPI20 implements AdNetworkServiceProvider {
     private static final Moshi MOSHI = new Moshi.Builder()
             .add(new AdFormatJsonAdapter())
             .add(new AdResponseStatusJsonAdapter())

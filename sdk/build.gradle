@@ -31,10 +31,34 @@ android {
     }
 }
 
+task javadoc(type: Javadoc) {
+    title = rootProject.name
+    destinationDir = file("$buildDir/outputs/docs/javadoc/")
+
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    
+    options.links("http://docs.oracle.com/javase/7/docs/api/");
+    options.links("https://developer.android.com/reference/");
+
+    exclude '**/BuildConfig.java'
+    exclude '**/R.java'
+
+
+    failOnError false  
+}
+
+afterEvaluate {
+    javadoc.classpath += files(android.libraryVariants.collect { variant ->
+        variant.javaCompile.classpath.files
+    })
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:25.1.0'
 
     compile 'com.squareup.okhttp3:okhttp:3.5.0'
     compile 'com.squareup.moshi:moshi:1.3.1'
+
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
 }
