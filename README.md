@@ -15,8 +15,11 @@ Packages description:
  - `com.portum.android.sdk.internal.helper` - helper classes
  - `com.portum.android.sdk.internal.model` - data models
  - `com.portum.android.sdk.internal.network` - ad server API client implementation
+ - `com.portum.android.sdk.internal.network` - listener related classes
 
 Important note that sdk have configuration of server location in `build.gradle`, so during debug it's point to stage server, and during release it's point to release server
+
+For SDK user to be aknowledged about some events `com.portum.android.sdk.PortumListener` can be implemented and installed in `com.portum.android.sdk.PortumFacade`
 
 ## Sample module
 
