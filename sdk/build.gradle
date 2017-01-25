@@ -25,6 +25,10 @@ android {
             buildConfigField "String", "AD_SERVER_HOST", "\"adserver.stg.vradx.com\""
         }
     }
+
+    lintOptions {
+        warning 'InvalidPackage' // https://github.com/square/okio/issues/58
+    }
 }
 
 dependencies {
