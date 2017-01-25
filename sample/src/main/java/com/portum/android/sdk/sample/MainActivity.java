@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
         mAdUnitId.setText("20");
 
         PortumFacade.prepare(this);
+        PortumFacade.setListener(new TestListener(this));
     }
 
     public void showAd(View view) {

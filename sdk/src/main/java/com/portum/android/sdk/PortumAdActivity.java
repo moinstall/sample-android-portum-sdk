@@ -32,6 +32,8 @@ public final class PortumAdActivity extends AppCompatActivity {
     public static final String IMPRESSION_URLS = "impUrls";
     public static final String CLICK_URL = "clickUrl";
 
+    private static int SHOW_IMMEDIATELY = 0;
+
     private String mBannerUrl;
     private String mVideoUrl;
     private String mClickUrl;
@@ -55,11 +57,14 @@ public final class PortumAdActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
 
+        final PortumListener listener = PortumFacade.listener();
+
         mCloseButton = (ImageView) findViewById(R.id.interstitial_close);
         mCloseButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                listener.onAdClose();
                 finish();
             }
         });
@@ -88,13 +93,15 @@ public final class PortumAdActivity extends AppCompatActivity {
                 if (failed || paramBitmap == null) {
                     Logger.w("Popup will not be showed because previous error");
                 } else {
-                    showCloseWithDelay();
+                    listener.onAdShow();
+                    showCloseWithDelay(SHOW_IMMEDIATELY);
                 }
             }
 
             @Override
             public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                 failed = true;
+                listener.onError(new Exception("banner loading error", failReason.getCause()));
             }
         });
 
@@ -117,7 +124,7 @@ public final class PortumAdActivity extends AppCompatActivity {
                     adImage.setVisibility(View.INVISIBLE);
 
                     if (TextUtils.isEmpty(mBannerUrl)) {
-                        showCloseWithDelay();
+                        showCloseWithDelay(SHOW_IMMEDIATELY);
                     }
                 }
             });
@@ -131,6 +138,7 @@ public final class PortumAdActivity extends AppCompatActivity {
             videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
+                    listener.onError(new Exception("MediaPlayer error w=" + what + "e=" + extra));
                     return true;
                 }
             });
@@ -145,13 +153,13 @@ public final class PortumAdActivity extends AppCompatActivity {
         }
     }
 
-    private void showCloseWithDelay() {
+    private void showCloseWithDelay(int delay) {
         mCloseButton.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mCloseButton.setVisibility(View.VISIBLE);
             }
-        }, 2000);
+        }, delay);
 
         PortumFacade.processImpressions(mImpressionUrls);
     }
@@ -168,6 +176,8 @@ public final class PortumAdActivity extends AppCompatActivity {
                     String packageName = uri.getQueryParameter("id");
                     uri = Uri.parse("market://details?id=" + packageName);
                 }
+
+                PortumFacade.listener().onAdClick();
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);

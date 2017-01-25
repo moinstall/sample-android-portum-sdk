@@ -9,6 +9,8 @@ import android.os.Looper;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.portum.android.sdk.internal.listener.DefaultListener;
+import com.portum.android.sdk.internal.listener.UIThreadListenerWrapper;
 import com.portum.android.sdk.internal.model.AdFormat;
 import com.portum.android.sdk.internal.model.UserInfo;
 import com.portum.android.sdk.internal.network.AdNetworkServiceProvider;
@@ -67,6 +69,11 @@ public final class PortumFacade {
      * Request to server builder
      */
     private static RequestBuilder mRequestBuilder = new RequestBuilder();
+
+    /**
+     * PortumListener for different events that may happens during using
+     */
+    private static PortumListener mListener = new UIThreadListenerWrapper(new DefaultListener());
 
     /**
      * Last setted adUnitId
@@ -144,6 +151,23 @@ public final class PortumFacade {
     }
 
     /**
+     * Set listener to monitor different SDK events
+     * @param listener see {@link PortumListener}
+     */
+    public static void setListener(PortumListener listener) {
+        if (mListener != listener && listener != null) {
+            mListener = new UIThreadListenerWrapper(listener);
+        }
+    }
+    /**
+     * For internal usage only
+     * @return listener {@link PortumListener}
+     */
+    static PortumListener listener() {
+        return mListener;
+    }
+
+    /**
      * Optional step, if SDK user can provde more detailed info about user, this will help
      * to show more relevant ads, this info has ben taken from social networks as example
      *
@@ -197,28 +221,47 @@ public final class PortumFacade {
                                     mContext.startActivity(intent);
                                 } else if (TextUtils.isEmpty(bannerUrl)) {
                                     Logger.w("No ads to show");
+
+                                    String message = null;
+                                    if (mAdResponse.getStatus() != null) {
+                                        message = mAdResponse.getStatus().value();
+                                    }
+
+                                    mListener.onError(new Exception("No ads to show, last server response '"
+                                            + message + "'"));
                                 }
                             } else {
                                 Logger.w("PortumFacade still not ready to use state=" + mState);
+
+                                mListener.onError(new Exception("PortumFacade status is "
+                                        + mState + "but it should be " + State.Ready));
                             }
                         }
                     });
 
                 } catch (Exception e) {
                     Logger.e(e.getMessage());
+                    mListener.onError(e);
                 }
             }
         });
     }
 
-    static void processImpressions(List<String> imps) {
-        mServer.processImpression(imps);
+    static void processImpressions(final List<String> imps) {
+        mExecutorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                mServer.processImpression(imps);
+            }
+        });
     }
 
     /**
      * Retrieve ad assets info and cache them
      */
     private static void cacheAd() {
+        mListener.onAdDownloading();
+
         mAdResponse = mServer.requestAd(
                 mRequestBuilder.buildAdRequest(
                         mContext,
@@ -231,7 +274,7 @@ public final class PortumFacade {
         PrivateImageLoader.getInstance().loadImage(bannerUrl, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
+                mListener.onAdDownloaded();
             }
         });
     }
