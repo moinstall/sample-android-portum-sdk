@@ -43,8 +43,7 @@ public class AdResponse {
         return mImpressionUrls;
     }
 
-    @Json(name = "status")
-    AdResponseStatus mStatus;
+    @Json(name = "status") AdResponseStatus mStatus;
     @Json(name = "ad_type") AdFormat mAdFormat;
     @Json(name = "video") Creative mVideoCreative;
     @Json(name = "banner") Creative mBannerCeative;
