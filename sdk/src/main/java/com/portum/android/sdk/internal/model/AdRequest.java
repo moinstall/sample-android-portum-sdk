@@ -108,13 +108,15 @@ public final class AdRequest {
                 mMCC = mcc;
                 mMNC = mnc;
             }
+
+            mHardwareId = tel.getDeviceId();
         } catch (Exception e) {
             Logger.w("Cannot retrieve carrier info");
         }
 
         mAppId = context.getPackageName();
 
-        mPlatformId = Settings.Secure.ANDROID_ID;
+        mPlatformId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public AdRequest(AdRequest adRequest) {

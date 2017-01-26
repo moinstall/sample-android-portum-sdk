@@ -12,6 +12,7 @@ import android.view.View;
 import com.portum.android.sdk.internal.listener.DefaultListener;
 import com.portum.android.sdk.internal.listener.UIThreadListenerWrapper;
 import com.portum.android.sdk.internal.model.AdFormat;
+import com.portum.android.sdk.internal.model.AdResponseStatus;
 import com.portum.android.sdk.internal.model.UserInfo;
 import com.portum.android.sdk.internal.network.AdNetworkServiceProvider;
 import com.portum.android.sdk.internal.Logger;
@@ -209,26 +210,26 @@ public final class PortumFacade {
                         @Override
                         public void run() {
                             if (mState == State.Ready) {
-                                String bannerUrl = getAdUrl();
-                                String videoUrl = getAdVideoUrl();
+                                if (mAdResponse != null && mAdResponse.getStatus() == AdResponseStatus.SUCCESS) {
+                                    String bannerUrl = getAdUrl();
+                                    String videoUrl = getAdVideoUrl();
 
-                                if (!TextUtils.isEmpty(videoUrl) || !TextUtils.isEmpty(bannerUrl)) {
                                     Intent intent = new Intent(mContext, PortumAdActivity.class);
                                     intent.putExtra(PortumAdActivity.BANNER_URL, bannerUrl);
                                     intent.putExtra(PortumAdActivity.VIDEO_URL, videoUrl);
+                                    intent.putExtra(PortumAdActivity.CLICK_URL, mAdResponse.getClickUrl());
                                     intent.putStringArrayListExtra(PortumAdActivity.IMPRESSION_URLS,
                                             new ArrayList<>(mAdResponse.getImpressionUrls()));
                                     mContext.startActivity(intent);
-                                } else if (TextUtils.isEmpty(bannerUrl)) {
+                                } else {
                                     Logger.w("No ads to show");
 
-                                    String message = null;
-                                    if (mAdResponse.getStatus() != null) {
-                                        message = mAdResponse.getStatus().value();
+                                    if (mAdResponse != null) {
+                                        String msg = mAdResponse.getReason() + ": " + mAdResponse.getMessage();
+                                        mListener.onError(new Exception(msg));
+                                    } else {
+                                        mListener.onError(new Exception("No ads to show, look at previous error in log"));
                                     }
-
-                                    mListener.onError(new Exception("No ads to show, last server response '"
-                                            + message + "'"));
                                 }
                             } else {
                                 Logger.w("PortumFacade still not ready to use state=" + mState);

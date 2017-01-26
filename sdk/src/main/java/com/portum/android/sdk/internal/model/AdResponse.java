@@ -43,7 +43,17 @@ public final class AdResponse {
         return mImpressionUrls;
     }
 
+    public String getMessage() {
+        return mMessage;
+    }
+
+    public String getReason() {
+        return mReason;
+    }
+
     @Json(name = "status") AdResponseStatus mStatus;
+    @Json(name = "message") String mMessage;
+    @Json(name = "reason") String mReason;
     @Json(name = "ad_type") AdFormat mAdFormat;
     @Json(name = "video") Creative mVideoCreative;
     @Json(name = "banner") Creative mBannerCreative;

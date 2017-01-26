@@ -49,7 +49,7 @@ public final class PortumAdServerAPI20 implements AdNetworkServiceProvider {
                     .addQueryParameter("w", String.valueOf(adRequest.getScreenWidth()))
                     .addQueryParameter("h", String.valueOf(adRequest.getScreenHeight()))
                     .addQueryParameter("android_ifa", adRequest.getGoogleAdId())
-                    .addQueryParameter("dnt", "1")
+                    .addQueryParameter("dnt", "0")
                     .addQueryParameter("android_id", adRequest.getPlatformId())
                     .addQueryParameter("dev_imei", adRequest.getmHardwareId())
                     .addQueryParameter("dev_mac", adRequest.getMAC())

@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
                 BuildConfig.DEBUG ? "test" : "prod"));
 
         mAdUnitId = (EditText) findViewById(R.id.placement_id);
-        mAdUnitId.setText("20");
+        mAdUnitId.setText("VYajJnXjNBX");
 
         PortumFacade.prepare(this);
         PortumFacade.setListener(new TestListener(this));
