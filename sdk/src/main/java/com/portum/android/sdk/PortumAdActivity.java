@@ -9,7 +9,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -115,7 +117,7 @@ public final class PortumAdActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(mVideoUrl)) {
             adImage.setAlpha(0.99f);
-            VideoView videoView = (VideoView) findViewById(R.id.video_view);
+            final VideoView videoView = (VideoView) findViewById(R.id.video_view);
             videoView.setVideoPath(mVideoUrl);
             videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
@@ -147,11 +149,16 @@ public final class PortumAdActivity extends AppCompatActivity {
                 }
             });
             videoView.start();
-            videoView.setOnClickListener(new View.OnClickListener() {
+            videoView.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
-                public void onClick(View v) {
-                    clickAd();
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        clickAd();
+                        return true;
+                    }
+
+                    return videoView.onTouchEvent(event);
                 }
             });
         }
