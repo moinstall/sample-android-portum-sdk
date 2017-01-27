@@ -42,6 +42,7 @@ public final class PortumAdActivity extends AppCompatActivity {
     private List<String> mImpressionUrls;
 
     private ImageView mCloseButton;
+    private VideoView mVideoView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -117,9 +118,9 @@ public final class PortumAdActivity extends AppCompatActivity {
 
         if (!TextUtils.isEmpty(mVideoUrl)) {
             adImage.setAlpha(0.99f);
-            final VideoView videoView = (VideoView) findViewById(R.id.video_view);
-            videoView.setVideoPath(mVideoUrl);
-            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            mVideoView = (VideoView) findViewById(R.id.video_view);
+            mVideoView.setVideoPath(mVideoUrl);
+            mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
                 @Override
                 public void onPrepared(MediaPlayer mp) {
@@ -130,14 +131,14 @@ public final class PortumAdActivity extends AppCompatActivity {
                     }
                 }
             });
-            videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            mVideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     mp.seekTo(0);
                     mp.start();
                 }
             });
-            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            mVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     String message = "MediaPlayer error w=" + what + "e=" + extra;
@@ -148,8 +149,7 @@ public final class PortumAdActivity extends AppCompatActivity {
                     return true;
                 }
             });
-            videoView.start();
-            videoView.setOnTouchListener(new View.OnTouchListener() {
+            mVideoView.setOnTouchListener(new View.OnTouchListener() {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -158,9 +158,27 @@ public final class PortumAdActivity extends AppCompatActivity {
                         return true;
                     }
 
-                    return videoView.onTouchEvent(event);
+                    return mVideoView.onTouchEvent(event);
                 }
             });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!TextUtils.isEmpty(mVideoUrl)) {
+            mVideoView.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (!TextUtils.isEmpty(mVideoUrl)) {
+            mVideoView.pause();
         }
     }
 
