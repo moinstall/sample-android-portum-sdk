@@ -138,7 +138,11 @@ public final class PortumAdActivity extends AppCompatActivity {
             videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
-                    listener.onError(new Exception("MediaPlayer error w=" + what + "e=" + extra));
+                    String message = "MediaPlayer error w=" + what + "e=" + extra;
+
+                    Logger.w(message);
+                    listener.onError(new Exception(message));
+
                     return true;
                 }
             });
@@ -183,7 +187,8 @@ public final class PortumAdActivity extends AppCompatActivity {
                 startActivity(intent);
 
             } catch (ActivityNotFoundException e) {
-                Logger.e("Unable show url = " + mClickUrl);
+                Logger.w("Unable show url = " + mClickUrl, e);
+                PortumFacade.listener().onError(e);
             }
         }
     }
