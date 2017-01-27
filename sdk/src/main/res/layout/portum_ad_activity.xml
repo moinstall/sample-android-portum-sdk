@@ -11,10 +11,11 @@
         android:layout_gravity="center"
         android:layout_centerInParent="true" />
 
+    <!-- PORSDK-238 fitXY -->
     <ImageView android:id="@+id/interstitial_banner"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="centerCrop"
+        android:scaleType="fitXY"
         android:adjustViewBounds="true"/>
 
     <ImageButton
