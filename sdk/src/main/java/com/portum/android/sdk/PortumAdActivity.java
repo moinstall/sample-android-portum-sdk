@@ -14,6 +14,7 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
@@ -117,9 +118,18 @@ public final class PortumAdActivity extends AppCompatActivity {
         });
 
         if (!TextUtils.isEmpty(mVideoUrl)) {
-            adImage.setAlpha(0.99f);
+            adImage.setAlpha(0.99f); // hack for some samsung device
             mVideoView = (VideoView) findViewById(R.id.video_view);
-            mVideoView.setVideoPath(mVideoUrl);
+
+            // http://stackoverflow.com/a/16899473/902217
+            MediaController mediaController = new MediaController(this);
+            mediaController.setAnchorView(mVideoView);
+
+            mVideoView.requestFocus();
+            mVideoView.setMediaController(mediaController);
+            mediaController.hide();
+
+            mVideoView.setVideoURI(Uri.parse(mVideoUrl));
             mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 
                 @Override
